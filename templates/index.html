@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องคิดเลข</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="calculator">
+        <div class="calculator-display">
+            <h1 id="result"></h1>
+        </div>
+        <div class="calculator-button">
+            <button class="operator" onclick="addOperator('+')" value="+">+</button>
+            <button class="operator" onclick="addOperator('-')" value="-">-</button>
+            <button class="operator" onclick="addOperator('*')" value="*">x</button>
+            <button class="operator" onclick="addOperator('/')" value="/">÷</button>
+            <button value="7" onclick="addDigit(7)">7</button>
+            <button value="8" onclick="addDigit(8)">8</button>
+            <button value="9" onclick="addDigit(9)">9</button>
+            <button value="4" onclick="addDigit(4)">4</button>
+            <button value="5" onclick="addDigit(5)">5</button>
+            <button value="6" onclick="addDigit(6)">6</button>
+            <button value="1" onclick="addDigit(1)">1</button>
+            <button value="2" onclick="addDigit(2)">2</button>
+            <button value="3" onclick="addDigit(3)">3</button>
+            <button value="." onclick="addDigit('.')" class="decimal">.</button>
+            <button value="0" onclick="addDigit(0)">0</button>
+            <button value="c" onclick="clearResult()" class="clear-btn" id="clear-btn">C</button>
+            <button value="=" onclick="evaluateResult()" class="equal operator">=</button>
+        </div>
+    </div>
+    <script>
+
+        addDigit = (value) => {
+            document.getElementById("result").textContent += value;
+        }
+
+        addOperator = (value) => {
+            const result = document.getElementById("result");
+            const lastChar = result.textContent[result.textContent.length - 1];
+
+            // check if the last character is an operator or if the input is empty
+            if (result.textContent === '' || lastChar === '+' || lastChar === '-' || lastChar === '*' || lastChar === '/' || lastChar === '.') {
+                // if the new value is also an operator, do not add it to the result but replace the last operator with the new value
+                if (value === '+' || value === '-' || value === '*' || value === '/') {
+                    result.textContent = result.textContent.slice(0, result.textContent.length - 1) + value;
+                }
+            } else {
+                // if the last character is not an operator and the input is not empty, simply add the new value to the result
+                result.textContent += value;
+            }
+        }
+
+        clearResult = () => {
+            document.getElementById("result").textContent = "";
+        }
+
+        clearResult = () => {
+            document.getElementById("result").textContent = "0";
+        }
+
+        evaluateResult = () => {
+            const result = document.getElementById("result").textContent;
+            console.log(result)
+            fetch('http://127.0.0.1:5000/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'equation': result
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").textContent = data.result;
+            })
+            .catch(error => console.error(error));
+        }
+
+
+
+    </script>
+</body>
+
+</html>
